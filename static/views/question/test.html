@@ -1,3 +1,5 @@
+ 
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +25,7 @@ body{padding: 20px; /*overflow-y: scroll;*/}
       	<div class="layui-input-block">
         	<select name="course_id" lay-verify="required" lay-search="">
 				<option value="1" selected>轮机基础</option>
-				<option value="2" >机舱管理</option>
+				<option value="2">机舱管理</option>
 				<option value="3" >轮机管理</option>
 				<option value="4" >避碰与信号</option>
     	    </select>
@@ -57,7 +59,7 @@ body{padding: 20px; /*overflow-y: scroll;*/}
   <legend>查询结果</legend>
 </fieldset>
 
-<table  class="layui-hide" id="demo" lay-filter="demo"></table>
+<table  class="layui-hide" id="demo"></table>
 
 <script type="text/html" id="toolbarDemo">
   <i class="layui-icon">&#xe654;</i>
@@ -66,19 +68,13 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 
 <script type="text/html" id="switchTpl">
   <!-- 这里的 checked 的状态只是演示 -->
-  <input type="checkbox" name="Status" value="{{d.Id}}" lay-skin="switch" lay-text="关|开" lay-filter="sexDemo" {{ d.Status == 1 ? 'checked' : '' }}>
+  <input type="checkbox" name="sex" value="{{d.id}}" lay-skin="switch" lay-text="女|男" lay-filter="sexDemo" {{ d.id == 10003 ? 'checked' : '' }}>
 </script>
-
-<script type="text/html" id="typeTpl">
-    {{ d.QuestionType == 0 ? '选择' : '其他' }}
+ 
+<script type="text/html" id="checkboxTpl">
+  <!-- 这里的 checked 的状态只是演示 -->
+  <input type="checkbox" name="lock"  title="锁定" lay-filter="lockDemo" >
 </script>
-
-<script type="text/html" id="barDemo">
-  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
-  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-</script>
-         
 
 <script src="/static/layui/layui.js" charset="utf-8"></script>
 
@@ -86,40 +82,36 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 <script src="/static/js/lib/jquery.helper.js"></script>
 
 <script>
+
 	console.log($("#query_form").serializeJson())
-	var tableDemo 
 
 	layui.use('table', function(){
 	  	var table = layui.table,form = layui.form;
 		//直接赋值数据
-	  	tableDemo = table.render({
+	  	var tableDemo = table.render({
 	    	elem: '#demo'
-	    	//,width: 1200
+	    	//,width: 900
 	    	//,height: 274
 	   		, cols: [[ //标题栏
-			      {field: 'Id', title: 'ID', width: 80, fixed: 'left', sort: true}
-				  ,{field: 'QuestionType', title: '类型',align:'center', templet:'#typeTpl', width: 80}
-			      ,{field: 'Title', title: '题目', width: 500} 
-			      ,{field: 'Note', title: '备注'}
-				  ,{field: 'Status', fixed: 'right', title:'状态', width:85, templet: '#switchTpl' , unresize:true}
-				  ,{fixed: 'right', title:'操作', width:178, align:'center', toolbar: '#barDemo'}
+			      {field: 'id', title: 'ID', width: 80, sort: true}
+			      ,{type: 'space', width: 100} //空列
+			      ,{field: 'username', title: '用户名', width: 120}
+			      ,{field: 'email', title: '邮箱', width: 150}
+			      ,{field: 'sign', title: '签名', width: 150}
+				  ,{field: 'sex', title:'性别', width:85, templet: '#switchTpl', unresize: true}
+			      ,{field:'lock', title:'是否锁定', width:110, templet: '#checkboxTpl', unresize: true}
+			      ,{field: 'city', title: '城市', width: 100}
+			      ,{field: 'experience', title: '积分', width: 80, sort: true}
+				  ,{field:'ip', title:'IP', width:120}
+			      ,{field:'logins', title:'登入次数', width:100, sort: true}
+			      ,{field:'joinTime', title:'加入时间', width:120}
+			      ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
 	    	]]
 			, url: '/question/list'
 			, where:$("#query_form").serializeJson()
 		    , skin: 'row' //表格风格
 		    , even: true
 		    //,size: 'lg' //尺寸
-			, done: function(res, curr, count){
-			    //如果是异步请求数据方式，res即为你接口返回的信息。
-			    //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
-			    console.log(res);
-			    
-			    //得到当前页码
-			    console.log(curr); 
-			    
-			    //得到数据总量
-			    console.log(count);
-			  }
 		    
 		    , page: true //是否显示分页
 		    , limits: [3,5,50]
@@ -141,46 +133,15 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 	    	layer.msg(JSON.stringify(data.field));
 			tableDemo.reload({where:$("#query_form").serializeJson()});
 	    	return false;
+			
 	  	});
-		
-		//监听工具条
-	  	table.on('tool(demo)', function(obj){
-		    var data = obj.data;
-		    if(obj.event === 'detail'){
-		      layer.open({
-				  type: 2,
-				  title: '题目信息',
-				  skin: 'layui-layer-rim', //加上边框
-				  area: ['550px', '380px'], //宽高
-				  content: '/static/views/question/query.html?question='+encodeURIComponent(JSON.stringify(data))
-				});
-		    } else if(obj.event === 'del'){
-		      layer.confirm('真的删除行么', function(index){
-		        obj.del();
-		        layer.close(index);
-		      });
-		    } else if(obj.event === 'edit'){
-		      //layer.alert('编辑行：<br>'+ JSON.stringify(data))
-				layer.open({
-				  type: 2,
-				  title: '题目信息',
-				  skin: 'layui-layer-rim', //加上边框
-				  area: ['550px', '460px'], //宽高
-				  content: '/static/views/question/edit.html?question='+encodeURIComponent(JSON.stringify(data))
-				});
-				
-		    }
-		  });
-		
-
 	});
 	function test(){
-		tableDemo.reload({where:$("#query_form").serializeJson()});
-		console.log("ttttttttttttttttt")
+		console.log(111)
 	}
-	
-	
 </script>
+
+
 
 
 </body>

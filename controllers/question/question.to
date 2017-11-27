@@ -28,22 +28,97 @@ func (this *QuestionController) ListQuestion() {
 	beego.Info("query_key is: ", this.GetString("query_key"))
 	beego.Info("question_status is: ", this.GetString("question_status"))
 
-	var question models.QuestionLunjijichu
-
-	var questions []*models.QuestionLunjijichu
-
-	_, err := providers.Question.GetMore(&questions, question, this.GetString("query_key"), (start-1)*length, length)
-
-	if err != nil {
-		this.Data["json"] = struct {
-			Code  int         `json:"code"`
-			Msg   string      `json:"msg"`
-			Count int64       `json:"count"`
-			Data  interface{} `json:"data"`
-		}{0, err.Error(), 0, nil}
-
-		this.ServeJSON()
-		return
+	data := [...](map[string]string){
+		{
+			"id":         "10001",
+			"username":   "杜甫",
+			"email":      "xianxin@layui.com",
+			"sex":        "0",
+			"city":       "浙江杭州",
+			"sign":       "人生恰似一场修行",
+			"experience": "116",
+			"ip":         "192.168.0.8",
+			"logins":     "108",
+			"joinTime":   "2016-10-14",
+		},
+		{
+			"id":         "10002",
+			"username":   "李白",
+			"email":      "xianxin@layui.com",
+			"sex":        "男",
+			"city":       "浙江杭州",
+			"sign":       "人生恰似一场修行",
+			"experience": "12",
+			"ip":         "192.168.0.8",
+			"logins":     "106",
+			"joinTime":   "2016-10-14",
+		}, {
+			"id":         "10003",
+			"username":   "王勃",
+			"email":      "xianxin@layui.com",
+			"sex":        "男",
+			"city":       "浙江杭州",
+			"sign":       "人生恰似一场修行",
+			"experience": "65",
+			"ip":         "192.168.0.8",
+			"logins":     "106",
+			"joinTime":   "2016-10-14",
+		}, {
+			"id":         "10004",
+			"username":   "贤心",
+			"email":      "xianxin@layui.com",
+			"sex":        "男",
+			"city":       "浙江杭州",
+			"sign":       "人生恰似一场修行",
+			"experience": "666",
+			"ip":         "192.168.0.8",
+			"logins":     "106",
+			"joinTime":   "2016-10-14",
+		}, {
+			"id":         "10005",
+			"username":   "贤心",
+			"email":      "xianxin@layui.com",
+			"sex":        "男",
+			"city":       "浙江杭州",
+			"sign":       "人生恰似一场修行",
+			"experience": "86",
+			"ip":         "192.168.0.8",
+			"logins":     "106",
+			"joinTime":   "2016-10-14",
+		}, {
+			"id":         "10006",
+			"username":   "贤心",
+			"email":      "xianxin@layui.com",
+			"sex":        "男",
+			"city":       "浙江杭州",
+			"sign":       "人生恰似一场修行",
+			"experience": "12",
+			"ip":         "192.168.0.8",
+			"logins":     "106",
+			"joinTime":   "2016-10-14",
+		}, {
+			"id":         "10007",
+			"username":   "贤心",
+			"email":      "xianxin@layui.com",
+			"sex":        "男",
+			"city":       "浙江杭州",
+			"sign":       "人生恰似一场修行",
+			"experience": "16",
+			"ip":         "192.168.0.8",
+			"logins":     "106",
+			"joinTime":   "2016-10-14",
+		}, {
+			"id":         "10008",
+			"username":   "贤心",
+			"email":      "xianxin@layui.com",
+			"sex":        "男",
+			"city":       "浙江杭州",
+			"sign":       "人生恰似一场修行",
+			"experience": "106",
+			"ip":         "192.168.0.8",
+			"logins":     "106",
+			"joinTime":   "2016-10-14",
+		},
 	}
 
 	this.Data["json"] = struct {
@@ -51,35 +126,10 @@ func (this *QuestionController) ListQuestion() {
 		Msg   string      `json:"msg"`
 		Count int64       `json:"count"`
 		Data  interface{} `json:"data"`
-	}{0, "xxxxxxx", 8, questions}
+	}{0, "xxxxxxx", 8, data}
 
 	this.ServeJSON()
 
-}
-
-func (this *QuestionController) UpdateQuestion() {
-
-	var question models.QuestionLunjijichu
-	json.Unmarshal(this.Ctx.Input.RequestBody, &question)
-
-	_, err := providers.Question.UpdateOne(&question, "title", "answer", "options")
-
-	if err != nil {
-		this.Data["json"] = struct {
-			Code int    `json:"code"`
-			Msg  string `json:"msg"`
-		}{10, err.Error()}
-
-		this.ServeJSON()
-		return
-	}
-
-	this.Data["json"] = struct {
-		Code int    `json:"code"`
-		Msg  string `json:"msg"`
-	}{0, ""}
-
-	this.ServeJSON()
 }
 
 func (this *QuestionController) ListQuestion2() {
