@@ -21,7 +21,7 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 	<div class="layui-inline">
 		<label class="layui-form-label">课程名称</label>
       	<div class="layui-input-block">
-        	<select name="course_id" lay-verify="required" lay-search="">
+        	<select name="course_id" lay-verify="required" lay-search="" id="course_id">
 				<option value="1" selected>轮机基础</option>
 				<option value="2" >机舱管理</option>
 				<option value="3" >轮机管理</option>
@@ -48,6 +48,7 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 	</div>
 	<div class="layui-inline">
 		<button class="layui-btn"  lay-submit  lay-filter="demo2">查询</button>
+		<button class="layui-btn"  lay-submit  lay-filter="addNew">新增</button>
 	</div>
   </div>
   
@@ -122,8 +123,8 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 			  }
 		    
 		    , page: true //是否显示分页
-		    , limits: [3,5,50]
-		    , limit: 3 //每页默认显示的数量
+		    , limits: [10,20,30]
+		    , limit: 10 //每页默认显示的数量
 		    , loading: true //请求数据时，是否显示loading
 	  	});
 	
@@ -140,6 +141,11 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 		form.on('submit(demo2)', function(data){
 	    	layer.msg(JSON.stringify(data.field));
 			tableDemo.reload({where:$("#query_form").serializeJson()});
+	    	return false;
+	  	});
+		
+		form.on('submit(addNew)', function(data){
+			AddNew()
 	    	return false;
 	  	});
 		
@@ -161,6 +167,8 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 		      });
 		    } else if(obj.event === 'edit'){
 		      //layer.alert('编辑行：<br>'+ JSON.stringify(data))
+				console.log(data)
+				data.CourseId = $("#course_id").val()
 				layer.open({
 				  type: 2,
 				  title: '题目信息',
@@ -174,12 +182,19 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 		
 
 	});
-	function test(){
+	function FlushData(){
 		tableDemo.reload({where:$("#query_form").serializeJson()});
-		console.log("ttttttttttttttttt")
 	}
 	
-	
+	function AddNew(){
+		layer.open({
+		  type: 2,
+		  title: '新增题目',
+		  skin: 'layui-layer-rim', //加上边框
+		  area: ['550px', '460px'], //宽高
+		  content: '/static/views/question/add.html?courseid='+$("#course_id").val()
+		});
+	}
 </script>
 
 

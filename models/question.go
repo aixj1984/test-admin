@@ -14,7 +14,7 @@ type Question struct {
 	Id           int
 	Title        string `xorm:"varchar(300) 'title'"`
 	QuestionType int8   `xorm:"int 'question_type'"` //0：选择;  1: 问答 ;
-	Options      string `xorm:"varchar(2000) 'options'"`
+	Options      string `xorm:"text 'options'"`
 	Answer       string `xorm:"varchar(20)   'answer'"`
 	Note         string `xorm:"varchar(300)  'note'"`
 	Status       int8   `xorm:"int  'status'"`
@@ -25,7 +25,7 @@ type QuestionLunjijichu struct {
 	Id           int
 	Title        string `xorm:"varchar(300) 'title'"`
 	QuestionType int8   `xorm:"int 'question_type'"` //0：选择;  1: 问答 ;
-	Options      string `xorm:"varchar(2000) 'options'"`
+	Options      string `xorm:"text 'options'"`
 	Answer       string `xorm:"varchar(20)   'answer'"`
 	Note         string `xorm:"varchar(300)  'note'"`
 	Status       int8   `xorm:"int  'status'"`

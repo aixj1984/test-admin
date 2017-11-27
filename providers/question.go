@@ -12,6 +12,7 @@ type IQuestionProvider interface {
 	InsertOne(m interface{}) (int64, error)
 	GetMore(array, object interface{}, query_key string, start, length int) (int64, error)
 	UpdateOne(m interface{}, cols ...string) (int64, error)
+	Count(array interface{}, object interface{}, query_key string) (int64, error)
 }
 
 //AccountProvider account provider
@@ -59,4 +60,12 @@ func (p *QuestionProvider) GetMore(array interface{}, object interface{}, query_
 	effact, err := o.QueryTable(object).Filter("title__icontains", query_key).Limit(length, start).All(array)
 
 	return effact, err
+}
+
+func (p *QuestionProvider) Count(array interface{}, object interface{}, query_key string) (int64, error) {
+	o := orm.NewOrm()
+
+	count, err := o.QueryTable(object).Filter("title__icontains", query_key).Count()
+
+	return count, err
 }

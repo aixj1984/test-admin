@@ -9,7 +9,7 @@ import (
 
 	"test-admin/providers"
 
-	"encoding/json"
+	"test-admin/payloads"
 
 	//"github.com/bitly/go-simplejson"
 )
@@ -46,12 +46,14 @@ func (this *QuestionController) ListQuestion() {
 		return
 	}
 
+	count, err := providers.Question.Count(&questions, question, this.GetString("query_key"))
+
 	this.Data["json"] = struct {
 		Code  int         `json:"code"`
 		Msg   string      `json:"msg"`
 		Count int64       `json:"count"`
 		Data  interface{} `json:"data"`
-	}{0, "xxxxxxx", 8, questions}
+	}{0, "", count, questions}
 
 	this.ServeJSON()
 
@@ -59,8 +61,30 @@ func (this *QuestionController) ListQuestion() {
 
 func (this *QuestionController) UpdateQuestion() {
 
+	var payload payloads.SaveQuestion
+	if err := payloads.GeneratePayload(&payload, this.Ctx.Input.RequestBody); err != nil {
+		beego.Error(err)
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{101, "参数错误"}
+		this.ServeJSON()
+		return
+	}
+
+	if payload.CourseId == 0 || payload.CourseId > 4 {
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{101, "courseid参数错误"}
+		this.ServeJSON()
+		return
+	}
 	var question models.QuestionLunjijichu
-	json.Unmarshal(this.Ctx.Input.RequestBody, &question)
+	question.Id = payload.QuestionId
+	question.Options = payload.Options
+	question.Title = payload.Title
+	question.Answer = payload.Answer
 
 	_, err := providers.Question.UpdateOne(&question, "title", "answer", "options")
 
@@ -82,70 +106,51 @@ func (this *QuestionController) UpdateQuestion() {
 	this.ServeJSON()
 }
 
-func (this *QuestionController) ListQuestion2() {
-
-	start, _ := this.GetInt("page")
-	length, _ := this.GetInt("limit")
-	beego.Info("Start is: ", start)
-	beego.Info("Length is: ", length)
-	beego.Info("course_id is: ", this.GetString("course_id"))
-	beego.Info("query_key is: ", this.GetString("query_key"))
-	beego.Info("question_status is: ", this.GetString("question_status"))
-
-	var options = make([]models.QuestionOption, 0)
-
-	var option = models.QuestionOption{
-		OptionType: 0,
-		OptionDesc: "aaaaaaa",
-		OptionKey:  "a",
-	}
-	options = append(options, option)
-	options_json, _ := json.Marshal(options)
-	beego.Info(string(options_json))
-
-	var question = &models.QuestionLunjijichu{
-		Options: string(options_json),
+func (this *QuestionController) InsertQuestion() {
+	var payload payloads.InsertQuestion
+	if err := payloads.GeneratePayload(&payload, this.Ctx.Input.RequestBody); err != nil {
+		beego.Error(err)
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{101, "参数错误"}
+		this.ServeJSON()
+		return
 	}
 
-	effact, err := providers.Question.InsertOne(question)
+	if payload.CourseId == 0 || payload.CourseId > 4 {
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{101, "courseid参数错误"}
+		this.ServeJSON()
+		return
+	}
+	var question models.QuestionLunjijichu
+	question.Options = payload.Options
+	question.Title = payload.Title
+	question.Answer = payload.Answer
+	question.Status = 0
+	question.Note = ""
 
-	beego.Info(effact)
-
-	err = providers.Question.GetOne(question)
+	_, err := providers.Question.InsertOne(&question)
 
 	if err != nil {
 		this.Data["json"] = struct {
-			Code  int         `json:"code"`
-			Msg   string      `json:"msg"`
-			Count int64       `json:"count"`
-			Data  interface{} `json:"data"`
-		}{101, err.Error(), 8, nil}
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{10, err.Error()}
+
 		this.ServeJSON()
 		return
 	}
 
 	this.Data["json"] = struct {
-		Code  int         `json:"code"`
-		Msg   string      `json:"msg"`
-		Count int64       `json:"count"`
-		Data  interface{} `json:"data"`
-	}{0, "xxxxxxx", 8, question}
-
-	var questions []*models.QuestionLunjijichu
-
-	effact, err = providers.Question.GetMore(&questions, question, "", 0, 10)
-
-	beego.Info(effact)
-
-	this.Data["json"] = struct {
-		Code  int         `json:"code"`
-		Msg   string      `json:"msg"`
-		Count int64       `json:"count"`
-		Data  interface{} `json:"data"`
-	}{0, "xxxxxxx", 8, questions}
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}{0, ""}
 
 	this.ServeJSON()
-
 }
 
 func (this *QuestionController) LoginCheck() {

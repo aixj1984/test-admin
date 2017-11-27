@@ -182,7 +182,7 @@ body{padding: 20px; /*overflow-y: scroll;*/}
   </div>
 </div>
 
-<div class="site-demo-button" style="margin-bottom: 0;">
+<div class="site-demo-button" style="margin-bottom: 0; text-align: right; "  >
   <button class="layui-btn " data-type="Save" onclick="Save()">保存</button>
 </div>
 
@@ -303,10 +303,11 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 		console.log(question.Id)
 		
 		var post_body = {
-			Id : question.Id,
+			QuestionId : question.Id,
 			Title: $("#title").val(),
 			Answer:save_answer_array.join(':'),
 			Options:JSON.stringify(save_option_array),
+			CourseId:parseInt(question.CourseId),
 		}
 		
 		$.ajax({
@@ -318,10 +319,10 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 			"success":   function (resp, textstatue) {
 				console.log(resp)
 				if (resp['code'] == 0){
-					console.log("save success") 
+					console.log("save success")					
 					parent.layer.close(index);
-					parent.test()
-					
+					parent.layer.msg("save success!",{icon:1,time:1000});
+					parent.FlushData()
 				}else{
 					layer.msg("error:" + resp["msg"],{icon:2,time:1000});
 				}
