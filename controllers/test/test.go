@@ -1,7 +1,7 @@
-package question
+package test
 
 import (
-	"bytes"
+	"time"
 
 	"github.com/astaxie/beego"
 
@@ -14,11 +14,196 @@ import (
 	//"github.com/bitly/go-simplejson"
 )
 
-type QuestionController struct {
+type TestController struct {
 	beego.Controller
 }
 
-func (this *QuestionController) ListQuestion() {
+func (this *TestController) ListTest() {
+
+	start, _ := this.GetInt("page")
+	length, _ := this.GetInt("limit")
+	beego.Info("Start is: ", start)
+	beego.Info("Length is: ", length)
+	beego.Info("course_id is: ", this.GetString("course_id"))
+	beego.Info("query_key is: ", this.GetString("query_key"))
+	beego.Info("test_status is: ", this.GetString("test_status"))
+
+	var test models.CourseTest
+
+	var tests []*models.CourseTest
+
+	_, err := providers.Test.GetMore(&tests, test, this.GetString("query_key"), this.GetString("test_status"), (start-1)*length, length)
+
+	if err != nil {
+		this.Data["json"] = struct {
+			Code  int         `json:"code"`
+			Msg   string      `json:"msg"`
+			Count int64       `json:"count"`
+			Data  interface{} `json:"data"`
+		}{0, err.Error(), 0, nil}
+
+		this.ServeJSON()
+		return
+	}
+
+	count, err := providers.Test.Count(&tests, test, this.GetString("query_key"), this.GetString("test_status"))
+
+	this.Data["json"] = struct {
+		Code  int         `json:"code"`
+		Msg   string      `json:"msg"`
+		Count int64       `json:"count"`
+		Data  interface{} `json:"data"`
+	}{0, "", count, tests}
+
+	this.ServeJSON()
+
+}
+
+func (this *TestController) UpdateTestStatus() {
+
+	var payload payloads.SaveTestStatus
+	beego.Info(string(this.Ctx.Input.RequestBody))
+	if err := payloads.GeneratePayload(&payload, this.Ctx.Input.RequestBody); err != nil {
+		beego.Error(err)
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{101, "参数错误"}
+		this.ServeJSON()
+		return
+	}
+
+	if payload.CourseId == 0 || payload.CourseId > 4 {
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{101, "courseid参数错误"}
+		this.ServeJSON()
+		return
+	}
+	var test models.CourseTest
+	test.Id = payload.TestId
+	test.Status = int8(payload.Status)
+	test.PublicTime = time.Now().Format("2006-01-02 15:04:05")
+
+	_, err := providers.Test.UpdateOne(&test, "status", "public_time")
+
+	if err != nil {
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{10, err.Error()}
+
+		this.ServeJSON()
+		return
+	}
+
+	this.Data["json"] = struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}{0, ""}
+
+	this.ServeJSON()
+}
+
+func (this *TestController) UpdateTest() {
+
+	var payload payloads.SaveTest
+	if err := payloads.GeneratePayload(&payload, this.Ctx.Input.RequestBody); err != nil {
+		beego.Error(err)
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{101, "参数错误"}
+		this.ServeJSON()
+		return
+	}
+
+	if payload.CourseId == 0 || payload.CourseId > 4 {
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{101, "courseid参数错误"}
+		this.ServeJSON()
+		return
+	}
+
+	var test models.CourseTest
+	test.Id = payload.TestId
+	test.CourseId = payload.CourseId
+	test.Abstract = payload.Abstract
+	test.Title = payload.Title
+	test.Sources = payload.Sources
+	test.TestType = int8(payload.TestType)
+
+	_, err := providers.Test.UpdateOne(&test, "title", "abstract", "sources", "test_type", "course_id")
+
+	if err != nil {
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{10, err.Error()}
+
+		this.ServeJSON()
+		return
+	}
+
+	this.Data["json"] = struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}{0, ""}
+
+	this.ServeJSON()
+}
+
+func (this *TestController) InsertTest() {
+	var payload payloads.InsertTest
+	if err := payloads.GeneratePayload(&payload, this.Ctx.Input.RequestBody); err != nil {
+		beego.Error(err)
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{101, "参数错误"}
+		this.ServeJSON()
+		return
+	}
+
+	if payload.CourseId == 0 || payload.CourseId > 4 {
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{101, "courseid参数错误"}
+		this.ServeJSON()
+		return
+	}
+	var test models.CourseTest
+	test.CourseId = payload.CourseId
+	test.Abstract = payload.Abstract
+	test.Title = payload.Title
+	test.Sources = payload.Sources
+	test.TestType = int8(payload.TestType)
+
+	_, err := providers.Test.InsertOne(&test)
+
+	if err != nil {
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{10, err.Error()}
+
+		this.ServeJSON()
+		return
+	}
+
+	this.Data["json"] = struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}{0, ""}
+
+	this.ServeJSON()
+}
+
+func (this *TestController) ListTestQuestion() {
 
 	start, _ := this.GetInt("page")
 	length, _ := this.GetInt("limit")
@@ -57,165 +242,4 @@ func (this *QuestionController) ListQuestion() {
 
 	this.ServeJSON()
 
-}
-
-func (this *QuestionController) UpdateQuestionStatus() {
-
-	var payload payloads.SaveQuestionStatus
-	beego.Info(string(this.Ctx.Input.RequestBody))
-	if err := payloads.GeneratePayload(&payload, this.Ctx.Input.RequestBody); err != nil {
-		beego.Error(err)
-		this.Data["json"] = struct {
-			Code int    `json:"code"`
-			Msg  string `json:"msg"`
-		}{101, "参数错误"}
-		this.ServeJSON()
-		return
-	}
-
-	if payload.CourseId == 0 || payload.CourseId > 4 {
-		this.Data["json"] = struct {
-			Code int    `json:"code"`
-			Msg  string `json:"msg"`
-		}{101, "courseid参数错误"}
-		this.ServeJSON()
-		return
-	}
-	var question models.QuestionLunjijichu
-	question.Id = payload.QuestionId
-	question.Status = int8(payload.Status)
-
-	_, err := providers.Question.UpdateOne(&question, "status")
-
-	if err != nil {
-		this.Data["json"] = struct {
-			Code int    `json:"code"`
-			Msg  string `json:"msg"`
-		}{10, err.Error()}
-
-		this.ServeJSON()
-		return
-	}
-
-	this.Data["json"] = struct {
-		Code int    `json:"code"`
-		Msg  string `json:"msg"`
-	}{0, ""}
-
-	this.ServeJSON()
-}
-
-func (this *QuestionController) UpdateQuestion() {
-
-	var payload payloads.SaveQuestion
-	if err := payloads.GeneratePayload(&payload, this.Ctx.Input.RequestBody); err != nil {
-		beego.Error(err)
-		this.Data["json"] = struct {
-			Code int    `json:"code"`
-			Msg  string `json:"msg"`
-		}{101, "参数错误"}
-		this.ServeJSON()
-		return
-	}
-
-	if payload.CourseId == 0 || payload.CourseId > 4 {
-		this.Data["json"] = struct {
-			Code int    `json:"code"`
-			Msg  string `json:"msg"`
-		}{101, "courseid参数错误"}
-		this.ServeJSON()
-		return
-	}
-	var question models.QuestionLunjijichu
-	question.Id = payload.QuestionId
-	question.Options = payload.Options
-	question.Title = payload.Title
-	question.Answer = payload.Answer
-
-	_, err := providers.Question.UpdateOne(&question, "title", "answer", "options")
-
-	if err != nil {
-		this.Data["json"] = struct {
-			Code int    `json:"code"`
-			Msg  string `json:"msg"`
-		}{10, err.Error()}
-
-		this.ServeJSON()
-		return
-	}
-
-	this.Data["json"] = struct {
-		Code int    `json:"code"`
-		Msg  string `json:"msg"`
-	}{0, ""}
-
-	this.ServeJSON()
-}
-
-func (this *QuestionController) InsertQuestion() {
-	var payload payloads.InsertQuestion
-	if err := payloads.GeneratePayload(&payload, this.Ctx.Input.RequestBody); err != nil {
-		beego.Error(err)
-		this.Data["json"] = struct {
-			Code int    `json:"code"`
-			Msg  string `json:"msg"`
-		}{101, "参数错误"}
-		this.ServeJSON()
-		return
-	}
-
-	if payload.CourseId == 0 || payload.CourseId > 4 {
-		this.Data["json"] = struct {
-			Code int    `json:"code"`
-			Msg  string `json:"msg"`
-		}{101, "courseid参数错误"}
-		this.ServeJSON()
-		return
-	}
-	var question models.QuestionLunjijichu
-	question.Options = payload.Options
-	question.Title = payload.Title
-	question.Answer = payload.Answer
-	question.Status = 0
-	question.Note = ""
-
-	_, err := providers.Question.InsertOne(&question)
-
-	if err != nil {
-		this.Data["json"] = struct {
-			Code int    `json:"code"`
-			Msg  string `json:"msg"`
-		}{10, err.Error()}
-
-		this.ServeJSON()
-		return
-	}
-
-	this.Data["json"] = struct {
-		Code int    `json:"code"`
-		Msg  string `json:"msg"`
-	}{0, ""}
-
-	this.ServeJSON()
-}
-
-func (this *QuestionController) LoginCheck() {
-
-	reqbody := this.Ctx.Request.Body
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(reqbody)
-	JiraAuth := buf.String()
-	//js, _ := simplejson.NewJson([]byte(reqstr))
-
-	//username, _ := js.Get("username").String()
-	//password, _ := js.Get("password").String()
-
-	LoginResp := "bbb"
-
-	this.Data["json"] = struct {
-		Jira_Auth  string      `json:"JiraAuth"`
-		Login_Resp interface{} `json:"LoginResp"`
-	}{JiraAuth, LoginResp}
-
-	this.ServeJSON()
 }

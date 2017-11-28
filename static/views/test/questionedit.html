@@ -13,22 +13,11 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 </head>
 <body>
 
-<fieldset class="layui-elem-field layui-field-title" style="margin-top: 0px;">
+<!--<fieldset class="layui-elem-field layui-field-title" style="margin-top: 0px;">
   <legend>查询条件</legend>
-</fieldset>
+</fieldset>-->
 <form class="layui-form layui-form-pane" id="query_form">
   <div class="layui-form-item ">
-	<div class="layui-inline">
-		<label class="layui-form-label">课程名称</label>
-      	<div class="layui-input-block">
-        	<select name="course_id" lay-verify="required" lay-search="" id="course_id">
-				<option value="1" selected>轮机基础</option>
-				<option value="2" >机舱管理</option>
-				<option value="3" >轮机管理</option>
-				<option value="4" >避碰与信号</option>
-    	    </select>
-    	</div>
-	</div>
 	<div class="layui-inline">
 	    <label class="layui-form-label">题目关键字</label>
 	    <div class="layui-input-inline">
@@ -47,14 +36,15 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 	</div>
 	<div class="layui-inline">
 		<button class="layui-btn"  lay-submit  lay-filter="Query">查询</button>
-		<button class="layui-btn layui-btn-normal"  lay-submit  lay-filter="addNew">新增</button>
 	</div>
   </div>
   
 </form>
 
 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-  <legend>查询结果</legend>
+	<legend>查询结果：
+		<span style="margin: 0; color: #FF5722;">已选90题</span>	
+	</legend>
 </fieldset>
 
 <table  class="layui-hide" id="demo" lay-filter="demo"></table>
@@ -65,20 +55,13 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 </script>
 
 <script type="text/html" id="switchTpl">
-  <!-- 这里的 checked 的状态只是演示 -->
-  <input type="checkbox" name="Status" value="{{d.Id}}" lay-skin="switch" lay-text="编辑|完成" lay-filter="sexDemo" {{ d.Status == 0 ? 'checked' : '' }} {{ d.Status ==1 ? 'disabled' : ''}}>
+	<input type="checkbox" name="lock" value="{{d.Id}}" title="选择" lay-filter="lockDemo" {{ d.Status != 1 ? 'checked' : '' }} } >
 </script>
 
 <script type="text/html" id="typeTpl">
     {{ d.QuestionType == 0 ? '选择' : '其他' }}
 </script>
-
-<script type="text/html" id="barDemo">
-  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
-  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-</script>
-         
+        
 
 <script src="/static/layui/layui.js" charset="utf-8"></script>
 
@@ -87,8 +70,37 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 
 <script>
 	console.log($("#query_form").serializeJson())
-	var tableDemo 
+	
+	var index = parent.layer.getFrameIndex(window.name);
 
+	function getUrlVars(){  
+	    var vars = [], hash;  
+	    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');  
+	    for(var i = 0; i < hashes.length; i++)  
+	    {  
+	        hash = hashes[i].split('=');  
+	        vars.push(hash[0]);  
+	        vars[hash[0]] = hash[1];  
+	    }  
+	    return vars;  
+	}  
+	  
+	function getUrlVar(name){  
+	    return getUrlVars()[name];  
+	}
+	
+	var test = JSON.parse(decodeURIComponent(getUrlVar('test')))
+
+	var course_id= test.CourseId
+	var test_id = test.Id
+	
+	
+	var tableDemo
+	
+	var query_condition = $("#query_form").serializeJson()
+	query_condition["course_id"] = course_id
+	query_condition["test_id"] = test_id
+	
 	layui.use('table', function(){
 	  	var table = layui.table,form = layui.form;
 		//直接赋值数据
@@ -97,16 +109,15 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 	    	//,width: 1200
 	    	//,height: 274
 	   		, cols: [[ //标题栏
-			      {field: 'Id', title: 'ID', width: 80, fixed: 'left'}
+			      {field: 'Id', title: 'ID', width: 60, fixed: 'left'}
 				  ,{field: 'QuestionType', title: '类型',align:'center', templet:'#typeTpl', width: 80}
 			      ,{field: 'Title', title: '题目', width: 500} 
 				  ,{field: 'Answer', title: '答案', align:'left', width: 80}
 			      ,{field: 'Note', title: '备注'}
-				  ,{field: 'Status', fixed: 'right', title:'状态', width:85,align:'center', templet: '#switchTpl' , unresize:true}
-				  ,{fixed: 'right', title:'操作', width:178, align:'center', toolbar: '#barDemo'}
+				  ,{field: 'Status', fixed: 'right', title:'状态', width:115,align:'center', templet: '#switchTpl' , unresize:true}
 	    	]]
-			, url: '/question/list'
-			, where:$("#query_form").serializeJson()
+			, url: '/test/question/list'
+			, where:query_condition
 		    , skin: 'row' //表格风格
 		    , even: true
 		    //,size: 'lg' //尺寸
@@ -174,7 +185,7 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 	
 		form.on('submit(Query)', function(data){
 	    	//layer.msg(JSON.stringify(data.field));
-			tableDemo.reload({where:$("#query_form").serializeJson()});
+			tableDemo.reload({where:$("#query_form").serializeJson()["course_id"] = course_id});
 	    	return false;
 	  	});
 		
@@ -216,18 +227,10 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 
 	});
 	function FlushData(){
-		tableDemo.reload({where:$("#query_form").serializeJson()});
+		var query_condition = $("#query_form").serializeJson()
+		tableDemo.reload({where:query_condition});
 	}
 	
-	function AddNew(){
-		layer.open({
-		  type: 2,
-		  title: '新增题目：'+$("#course_id").find("option:selected").text(),
-		  skin: 'layui-layer-rim', //加上边框
-		  area: ['550px', '460px'], //宽高
-		  content: '/static/views/question/add.html?courseid='+$("#course_id").val()
-		});
-	}
 </script>
 
 

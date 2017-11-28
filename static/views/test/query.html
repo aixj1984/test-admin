@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<title></title>
+
+<link rel="stylesheet" href="/static/layui/css/layui.css">
+
+<style>
+body{padding: 20px; /*overflow-y: scroll;*/}
+</style>
+</head>
+<body>
+<form class="layui-form layui-form-pane" action="">
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">考试标题</label>
+		<div class="layui-input-block">
+		  <textarea placeholder="请输入内容" class="layui-textarea" style="min-height:50px" id="title" disabled></textarea>
+		</div>
+	</div>
+	<div class="layui-form-item layui-form-text">
+		<label class="layui-form-label">考试简介</label>
+		<div class="layui-input-block">
+		  <textarea placeholder="请输入内容" class="layui-textarea" style="min-height:80px" id="abstract" disabled></textarea>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">试题来源</label>
+		<div class="layui-input-block">
+			<input type="text" name="title" lay-verify="sources" autocomplete="off" id="sources" placeholder="请输入标题" class="layui-input" disabled>
+		</div>
+	</div>
+	<div class="layui-form-item">
+	    <label class="layui-form-label">试卷类型</label>
+	    <div class="layui-input-block" id="testtype" >
+	      <input type="radio" name="testtype" value="0" title="历年真题" checked="" >
+	      <input type="radio" name="testtype" value="1" title="题库刷题" >
+	      <input type="radio" name="testtype" value="2" title="模拟测试" >
+	    </div>
+	</div>
+</form>
+
+
+<script src="/static/layui/layui.js" charset="utf-8"></script>
+
+<script src="/static/js/lib/jquery1.11.3.min.js"></script>
+<script src="/static/js/lib/jquery.helper.js"></script>
+
+<script>
+	var index = parent.layer.getFrameIndex(window.name);
+
+	function getUrlVars(){  
+	    var vars = [], hash;  
+	    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');  
+	    for(var i = 0; i < hashes.length; i++)  
+	    {  
+	        hash = hashes[i].split('=');  
+	        vars.push(hash[0]);  
+	        vars[hash[0]] = hash[1];  
+	    }  
+	    return vars;  
+	}  
+	  
+	function getUrlVar(name){  
+	    return getUrlVars()[name];  
+	}
+	
+	var test = JSON.parse(decodeURIComponent(getUrlVar('test')))
+	
+	$("#title").val(test.Title)
+	$("#abstract").val(test.Abstract)
+	$("#sources").val(test.Sources)
+	$("input:radio[name=testtype][value="+test.TestType.toString()+"]").attr("checked",true);
+	
+	
+
+
+	var course_id= test.CourseId
+	var test_id = test.Id
+	
+	layui.use(['form','element'], function(){
+		var $ = layui.jquery
+		,element = layui.element;
+		
+	});
+	
+	function Save(){		
+		var post_body = {
+			Title: $("#title").val(),
+			Abstract:$("#abstract").val(),
+			Sources:$("#sources").val(),
+			TestType:parseInt($("input[name='testtype']:checked").val()),
+			CourseId:course_id,
+			TestId:test_id,
+		}
+		
+		$.ajax({
+			"type":         "post",
+			"contentType":  "application/json",
+			"url":          "/test/update",
+			"data": JSON.stringify(post_body),
+			"datatype":     "json",
+			"success":   function (resp, textstatue) {
+				console.log(resp)
+				if (resp['code'] == 0){
+					console.log("save success")					
+					parent.layer.close(index);
+					parent.layer.msg("save success!",{icon:1,time:1000});
+					parent.FlushData()
+				}else{
+					layer.msg("error:" + resp["msg"],{icon:2,time:1000});
+				}
+			},
+			"error":function(){
+				layer.msg("ajax error!",{icon:2,time:1000});
+			}
+		}); 
+
+	}
+</script>
+
+</body>
+</html>
