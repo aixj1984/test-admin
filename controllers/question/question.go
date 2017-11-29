@@ -23,13 +23,6 @@ import (
 <option value="4" >避碰与信号</option>
 */
 
-var CourseMap = map[string]string{
-	"1": "question_lunjijichu",
-	"2": "question_jicangguanli",
-	"3": "question_lunjiguanli",
-	"4": "question_bipengyuxinhao",
-}
-
 type QuestionController struct {
 	beego.Controller
 }
@@ -46,7 +39,7 @@ func (this *QuestionController) ListQuestion() {
 
 	var questions []*models.Question
 
-	_, err := providers.Question.GetMore(&questions, CourseMap[this.GetString("course_id")], this.GetString("query_key"), this.GetString("question_status"), (start-1)*length, length)
+	_, err := providers.Question.GetMore(&questions, models.CourseMap[this.GetString("course_id")], this.GetString("query_key"), this.GetString("question_status"), (start-1)*length, length)
 
 	if err != nil {
 		this.Data["json"] = struct {
@@ -60,7 +53,7 @@ func (this *QuestionController) ListQuestion() {
 		return
 	}
 
-	count, err := providers.Question.Count(CourseMap[this.GetString("course_id")], this.GetString("query_key"), this.GetString("question_status"))
+	count, err := providers.Question.Count(models.CourseMap[this.GetString("course_id")], this.GetString("query_key"), this.GetString("question_status"))
 
 	this.Data["json"] = struct {
 		Code  int         `json:"code"`
@@ -99,7 +92,7 @@ func (this *QuestionController) UpdateQuestionStatus() {
 	question.Id = payload.QuestionId
 	question.Status = int8(payload.Status)
 
-	_, err := providers.Question.UpdateOneStatus(&question, CourseMap[strconv.Itoa(payload.CourseId)])
+	_, err := providers.Question.UpdateOneStatus(&question, models.CourseMap[strconv.Itoa(payload.CourseId)])
 
 	if err != nil {
 		this.Data["json"] = struct {
@@ -146,7 +139,7 @@ func (this *QuestionController) UpdateQuestion() {
 	question.Title = payload.Title
 	question.Answer = payload.Answer
 
-	_, err := providers.Question.UpdateOne(&question, CourseMap[strconv.Itoa(payload.CourseId)])
+	_, err := providers.Question.UpdateOne(&question, models.CourseMap[strconv.Itoa(payload.CourseId)])
 
 	if err != nil {
 		this.Data["json"] = struct {
@@ -193,7 +186,7 @@ func (this *QuestionController) InsertQuestion() {
 	question.Status = 0
 	question.Note = ""
 
-	_, err := providers.Question.InsertOne(&question, CourseMap[strconv.Itoa(payload.CourseId)])
+	_, err := providers.Question.InsertOne(&question, models.CourseMap[strconv.Itoa(payload.CourseId)])
 
 	if err != nil {
 		this.Data["json"] = struct {

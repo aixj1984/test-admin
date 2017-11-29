@@ -32,7 +32,7 @@ func (this *TestController) ListTest() {
 
 	var tests []*models.CourseTest
 
-	_, err := providers.Test.GetMore(&tests, test, this.GetString("query_key"), this.GetString("test_status"), (start-1)*length, length)
+	_, err := providers.Test.GetMore(&tests, test, this.GetString("course_id"), this.GetString("query_key"), this.GetString("test_status"), (start-1)*length, length)
 
 	if err != nil {
 		this.Data["json"] = struct {
@@ -46,7 +46,7 @@ func (this *TestController) ListTest() {
 		return
 	}
 
-	count, err := providers.Test.Count(test, this.GetString("query_key"), this.GetString("test_status"))
+	count, err := providers.Test.Count(test, this.GetString("course_id"), this.GetString("query_key"), this.GetString("test_status"))
 
 	this.Data["json"] = struct {
 		Code  int         `json:"code"`
@@ -218,7 +218,7 @@ func (this *TestController) ListTestQuestion() {
 
 	var questions []*models.Question
 
-	_, err := providers.TestQuestion.GetMore(&questions, question, this.GetString("query_key"), this.GetString("question_status"), this.GetString("test_id"), (start-1)*length, length)
+	_, err := providers.TestQuestion.GetMore(&questions, question, this.GetString("query_key"), this.GetString("question_status"), models.CourseMap[this.GetString("course_id")], this.GetString("test_id"), (start-1)*length, length)
 
 	if err != nil {
 		this.Data["json"] = struct {
@@ -232,7 +232,7 @@ func (this *TestController) ListTestQuestion() {
 		return
 	}
 
-	count, err := providers.TestQuestion.Count(question, this.GetString("query_key"), this.GetString("question_status"), this.GetString("test_id"))
+	count, err := providers.TestQuestion.Count(question, this.GetString("query_key"), this.GetString("question_status"), models.CourseMap[this.GetString("course_id")], this.GetString("test_id"))
 
 	if err != nil {
 		this.Data["json"] = struct {
@@ -246,7 +246,7 @@ func (this *TestController) ListTestQuestion() {
 		return
 	}
 
-	choose_count, err := providers.TestQuestion.Count(question, "", "1", this.GetString("test_id"))
+	choose_count, err := providers.TestQuestion.Count(question, "", "1", models.CourseMap[this.GetString("course_id")], this.GetString("test_id"))
 
 	if err != nil {
 		this.Data["json"] = struct {

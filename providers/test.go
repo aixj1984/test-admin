@@ -12,9 +12,9 @@ import (
 type ITestProvider interface {
 	GetOne(interface{}) error
 	InsertOne(m interface{}) (int64, error)
-	GetMore(array, object interface{}, query_key, status string, start, length int) (int64, error)
+	GetMore(array, object interface{}, course_id, query_key, status string, start, length int) (int64, error)
 	UpdateOne(m interface{}, cols ...string) (int64, error)
-	Count(object interface{}, query_key, status string) (int64, error)
+	Count(object interface{}, course_id, query_key, status string) (int64, error)
 }
 
 //AccountProvider account provider
@@ -46,7 +46,7 @@ func (p *TestProvider) UpdateOne(m interface{}, cols ...string) (int64, error) {
 	return effact, err
 }
 
-func (p *TestProvider) GetMore(array interface{}, object interface{}, query_key, status string, start, length int) (int64, error) {
+func (p *TestProvider) GetMore(array interface{}, object interface{}, course_id, query_key, status string, start, length int) (int64, error) {
 	o := orm.NewOrm()
 	// LIMIT 10 OFFSET 20 注意跟 SQL 反过来的
 
@@ -61,6 +61,10 @@ func (p *TestProvider) GetMore(array interface{}, object interface{}, query_key,
 		cond1 = cond.AndCond(cond1).AndCond(cond.And("status", status))
 	}
 
+	if len(course_id) > 0 {
+		cond1 = cond.AndCond(cond1).AndCond(cond.And("course_id", course_id))
+	}
+
 	qs := o.QueryTable(object)
 	qs = qs.SetCond(cond1)
 
@@ -71,7 +75,7 @@ func (p *TestProvider) GetMore(array interface{}, object interface{}, query_key,
 	return effact, err
 }
 
-func (p *TestProvider) Count(object interface{}, query_key, status string) (int64, error) {
+func (p *TestProvider) Count(object interface{}, course_id, query_key, status string) (int64, error) {
 	o := orm.NewOrm()
 
 	cond := orm.NewCondition()
@@ -82,6 +86,10 @@ func (p *TestProvider) Count(object interface{}, query_key, status string) (int6
 	}
 	if status != "2" {
 		cond1 = cond.AndCond(cond1).AndCond(cond.And("status", status))
+	}
+
+	if len(course_id) > 0 {
+		cond1 = cond.AndCond(cond1).AndCond(cond.And("course_id", course_id))
 	}
 
 	qs := o.QueryTable(object)

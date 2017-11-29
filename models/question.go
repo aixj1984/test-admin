@@ -9,6 +9,13 @@ type QuestionOption struct {
 	OptionKey  string
 }
 
+var CourseMap = map[string]string{
+	"1": "question_lunjijichu",
+	"2": "question_jicangguanli",
+	"3": "question_lunjiguanli",
+	"4": "question_bipengyuxinhao",
+}
+
 //Account account model
 type Question struct {
 	Id           int
