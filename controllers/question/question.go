@@ -11,8 +11,24 @@ import (
 
 	"test-admin/payloads"
 
+	"strconv"
+
 	//"github.com/bitly/go-simplejson"
 )
+
+/*
+<option value="1" >轮机基础</option>
+<option value="2" >机舱管理</option>
+<option value="3" >轮机管理</option>
+<option value="4" >避碰与信号</option>
+*/
+
+var CourseMap = map[string]string{
+	"1": "question_lunjijichu",
+	"2": "question_jicangguanli",
+	"3": "question_lunjiguanli",
+	"4": "question_bipengyuxinhao",
+}
 
 type QuestionController struct {
 	beego.Controller
@@ -28,11 +44,9 @@ func (this *QuestionController) ListQuestion() {
 	beego.Info("query_key is: ", this.GetString("query_key"))
 	beego.Info("question_status is: ", this.GetString("question_status"))
 
-	var question models.QuestionLunjijichu
+	var questions []*models.Question
 
-	var questions []*models.QuestionLunjijichu
-
-	_, err := providers.Question.GetMore(&questions, question, this.GetString("query_key"), this.GetString("question_status"), (start-1)*length, length)
+	_, err := providers.Question.GetMore(&questions, CourseMap[this.GetString("course_id")], this.GetString("query_key"), this.GetString("question_status"), (start-1)*length, length)
 
 	if err != nil {
 		this.Data["json"] = struct {
@@ -46,7 +60,7 @@ func (this *QuestionController) ListQuestion() {
 		return
 	}
 
-	count, err := providers.Question.Count(&questions, question, this.GetString("query_key"), this.GetString("question_status"))
+	count, err := providers.Question.Count(CourseMap[this.GetString("course_id")], this.GetString("query_key"), this.GetString("question_status"))
 
 	this.Data["json"] = struct {
 		Code  int         `json:"code"`
@@ -81,11 +95,11 @@ func (this *QuestionController) UpdateQuestionStatus() {
 		this.ServeJSON()
 		return
 	}
-	var question models.QuestionLunjijichu
+	var question models.Question
 	question.Id = payload.QuestionId
 	question.Status = int8(payload.Status)
 
-	_, err := providers.Question.UpdateOne(&question, "status")
+	_, err := providers.Question.UpdateOneStatus(&question, CourseMap[strconv.Itoa(payload.CourseId)])
 
 	if err != nil {
 		this.Data["json"] = struct {
@@ -126,13 +140,13 @@ func (this *QuestionController) UpdateQuestion() {
 		this.ServeJSON()
 		return
 	}
-	var question models.QuestionLunjijichu
+	var question models.Question
 	question.Id = payload.QuestionId
 	question.Options = payload.Options
 	question.Title = payload.Title
 	question.Answer = payload.Answer
 
-	_, err := providers.Question.UpdateOne(&question, "title", "answer", "options")
+	_, err := providers.Question.UpdateOne(&question, CourseMap[strconv.Itoa(payload.CourseId)])
 
 	if err != nil {
 		this.Data["json"] = struct {
@@ -172,14 +186,14 @@ func (this *QuestionController) InsertQuestion() {
 		this.ServeJSON()
 		return
 	}
-	var question models.QuestionLunjijichu
+	var question models.Question
 	question.Options = payload.Options
 	question.Title = payload.Title
 	question.Answer = payload.Answer
 	question.Status = 0
 	question.Note = ""
 
-	_, err := providers.Question.InsertOne(&question)
+	_, err := providers.Question.InsertOne(&question, CourseMap[strconv.Itoa(payload.CourseId)])
 
 	if err != nil {
 		this.Data["json"] = struct {
