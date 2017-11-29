@@ -201,10 +201,12 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 				  content: '/static/views/test/query.html?test='+encodeURIComponent(JSON.stringify(data))
 				});
 		    } else if(obj.event === 'del'){
-		      layer.confirm('真的删除行么', function(index){
-		        obj.del();
-		        layer.close(index);
-		      });
+				/*
+			      layer.confirm('真的删除行么', function(index){
+			        obj.del();
+			        layer.close(index);
+			      });*/
+				layer.msg('暂时不开放删除', {icon: 2,time: 1000});
 		    } else if(obj.event === 'edit'){
 		      //layer.alert('编辑行：<br>'+ JSON.stringify(data))
 				console.log(data)
@@ -218,19 +220,28 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 				});
 		    } else if(obj.event === 'question'){
 				console.log(data)
-				console.log( window.screen.availHeight)
+				
 				var layer_width = '100%'
 				if (window.screen.availHeight > 1000){
 					layer_width = '700px'
 				}
+				
+				var openurl = ""
+				if (data.Status > 0 ){
+					layer.msg('确认了的无法再编辑', {icon: 2,time: 1000});
+					openurl = '/static/views/test/questionlist.html?test='+encodeURIComponent(JSON.stringify(data))
+				}else{
+					openurl = '/static/views/test/questionedit.html?test='+encodeURIComponent(JSON.stringify(data))
+				}
+
 				var index = layer.open({
 					type: 2,
 					title: '试卷题目 / '+$("#course_id").find("option:selected").text()+" / " + data.Title,
-					content: '/static/views/test/questionedit.html?test='+encodeURIComponent(JSON.stringify(data)),
+					content: openurl ,
 					area: ['900px', layer_width],
 					maxmin: false
 				});
-				//layer.full(index);
+				
 			}
 
 		  });

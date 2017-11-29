@@ -195,13 +195,19 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 				  content: '/static/views/question/query.html?question='+encodeURIComponent(JSON.stringify(data))
 				});
 		    } else if(obj.event === 'del'){
-		      layer.confirm('真的删除行么', function(index){
-		        obj.del();
-		        layer.close(index);
-		      });
+				/*
+			      layer.confirm('真的删除行么', function(index){
+			        obj.del();
+			        layer.close(index);
+			      });*/
+				layer.msg('暂时不开放删除', {icon: 2,time: 1000});
 		    } else if(obj.event === 'edit'){
 		      //layer.alert('编辑行：<br>'+ JSON.stringify(data))
 				console.log(data)
+				if (data.Status >0 ){
+					layer.msg('确认了的无法再编辑', {icon: 2,time: 1000});
+					return 
+				}
 				data.CourseId = $("#course_id").val()
 				layer.open({
 				  type: 2,
