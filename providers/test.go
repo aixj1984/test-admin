@@ -14,7 +14,7 @@ type ITestProvider interface {
 	InsertOne(m interface{}) (int64, error)
 	GetMore(array, object interface{}, query_key, status string, start, length int) (int64, error)
 	UpdateOne(m interface{}, cols ...string) (int64, error)
-	Count(array interface{}, object interface{}, query_key, status string) (int64, error)
+	Count(object interface{}, query_key, status string) (int64, error)
 }
 
 //AccountProvider account provider
@@ -71,7 +71,7 @@ func (p *TestProvider) GetMore(array interface{}, object interface{}, query_key,
 	return effact, err
 }
 
-func (p *TestProvider) Count(array interface{}, object interface{}, query_key, status string) (int64, error) {
+func (p *TestProvider) Count(object interface{}, query_key, status string) (int64, error) {
 	o := orm.NewOrm()
 
 	cond := orm.NewCondition()

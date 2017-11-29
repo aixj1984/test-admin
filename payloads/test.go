@@ -22,3 +22,8 @@ type InsertTest struct {
 	Title    string `validate:"required"`
 	Sources  string `validate:"required"`
 }
+type SaveTestQuestionStatus struct {
+	TestId     int `validate:"required"`
+	QuestionId int `validate:"required"`
+	Status     int
+}

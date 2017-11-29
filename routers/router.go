@@ -22,5 +22,6 @@ func init() {
 	beego.Router("/test/insert", &test.TestController{}, "post:InsertTest")
 
 	beego.Router("/test/question/list", &test.TestController{}, "get:ListTestQuestion")
+	beego.Router("/test/question/updatestatus", &test.TestController{}, "post:UpdateTestQuestionStatus")
 
 }

@@ -46,7 +46,7 @@ func (this *TestController) ListTest() {
 		return
 	}
 
-	count, err := providers.Test.Count(&tests, test, this.GetString("query_key"), this.GetString("test_status"))
+	count, err := providers.Test.Count(test, this.GetString("query_key"), this.GetString("test_status"))
 
 	this.Data["json"] = struct {
 		Code  int         `json:"code"`
@@ -210,14 +210,15 @@ func (this *TestController) ListTestQuestion() {
 	beego.Info("Start is: ", start)
 	beego.Info("Length is: ", length)
 	beego.Info("course_id is: ", this.GetString("course_id"))
+	beego.Info("test_id is: ", this.GetString("test_id"))
 	beego.Info("query_key is: ", this.GetString("query_key"))
 	beego.Info("question_status is: ", this.GetString("question_status"))
 
-	var question models.QuestionLunjijichu
+	var question models.Question
 
-	var questions []*models.QuestionLunjijichu
+	var questions []*models.Question
 
-	_, err := providers.Question.GetMore(&questions, question, this.GetString("query_key"), this.GetString("question_status"), (start-1)*length, length)
+	_, err := providers.TestQuestion.GetMore(&questions, question, this.GetString("query_key"), this.GetString("question_status"), this.GetString("test_id"), (start-1)*length, length)
 
 	if err != nil {
 		this.Data["json"] = struct {
@@ -225,21 +226,105 @@ func (this *TestController) ListTestQuestion() {
 			Msg   string      `json:"msg"`
 			Count int64       `json:"count"`
 			Data  interface{} `json:"data"`
-		}{0, err.Error(), 0, nil}
+		}{10, err.Error(), 0, nil}
 
 		this.ServeJSON()
 		return
 	}
 
-	count, err := providers.Question.Count(&questions, question, this.GetString("query_key"), this.GetString("question_status"))
+	count, err := providers.TestQuestion.Count(question, this.GetString("query_key"), this.GetString("question_status"), this.GetString("test_id"))
+
+	if err != nil {
+		this.Data["json"] = struct {
+			Code  int         `json:"code"`
+			Msg   string      `json:"msg"`
+			Count int64       `json:"count"`
+			Data  interface{} `json:"data"`
+		}{10, err.Error(), 0, nil}
+
+		this.ServeJSON()
+		return
+	}
+
+	choose_count, err := providers.TestQuestion.Count(question, "", "1", this.GetString("test_id"))
+
+	if err != nil {
+		this.Data["json"] = struct {
+			Code  int         `json:"code"`
+			Msg   string      `json:"msg"`
+			Count int64       `json:"count"`
+			Data  interface{} `json:"data"`
+		}{10, err.Error(), 0, nil}
+
+		this.ServeJSON()
+		return
+	}
 
 	this.Data["json"] = struct {
-		Code  int         `json:"code"`
-		Msg   string      `json:"msg"`
-		Count int64       `json:"count"`
-		Data  interface{} `json:"data"`
-	}{0, "", count, questions}
+		Code        int         `json:"code"`
+		Msg         string      `json:"msg"`
+		Count       int64       `json:"count"`
+		ChooseCount int64       `json:"choosecount"`
+		Data        interface{} `json:"data"`
+	}{0, "", count, choose_count, questions}
 
 	this.ServeJSON()
 
+}
+
+func (this *TestController) UpdateTestQuestionStatus() {
+
+	var payload payloads.SaveTestQuestionStatus
+	beego.Info(string(this.Ctx.Input.RequestBody))
+	if err := payloads.GeneratePayload(&payload, this.Ctx.Input.RequestBody); err != nil {
+		beego.Error(err)
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{101, "参数错误"}
+		this.ServeJSON()
+		return
+	}
+
+	if payload.Status > 1 {
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{101, "Status参数错误"}
+		this.ServeJSON()
+		return
+	}
+	var question models.TestQuestion
+	question.TestId = payload.TestId
+	question.QuestionId = payload.QuestionId
+
+	var err error
+
+	if payload.Status == 0 {
+		err = providers.TestQuestion.GetOne(&question, "question_id", "test_id")
+
+		if err == nil {
+			_, err = providers.TestQuestion.DeleteOne(&question)
+		}
+
+	} else {
+		_, err = providers.TestQuestion.InsertOne(&question)
+	}
+
+	if err != nil {
+		this.Data["json"] = struct {
+			Code int    `json:"code"`
+			Msg  string `json:"msg"`
+		}{10, err.Error()}
+
+		this.ServeJSON()
+		return
+	}
+
+	this.Data["json"] = struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}{0, ""}
+
+	this.ServeJSON()
 }
