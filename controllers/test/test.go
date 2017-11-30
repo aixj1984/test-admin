@@ -73,7 +73,7 @@ func (this *TestController) UpdateTestStatus() {
 		return
 	}
 
-	if payload.CourseId == 0 || payload.CourseId > 4 {
+	if payload.CourseId == 0 || payload.CourseId > 11 {
 		this.Data["json"] = struct {
 			Code int    `json:"code"`
 			Msg  string `json:"msg"`
@@ -119,7 +119,7 @@ func (this *TestController) UpdateTest() {
 		return
 	}
 
-	if payload.CourseId == 0 || payload.CourseId > 4 {
+	if payload.CourseId == 0 || payload.CourseId > 11 {
 		this.Data["json"] = struct {
 			Code int    `json:"code"`
 			Msg  string `json:"msg"`
@@ -168,7 +168,7 @@ func (this *TestController) InsertTest() {
 		return
 	}
 
-	if payload.CourseId == 0 || payload.CourseId > 4 {
+	if payload.CourseId == 0 || payload.CourseId > 11 {
 		this.Data["json"] = struct {
 			Code int    `json:"code"`
 			Msg  string `json:"msg"`

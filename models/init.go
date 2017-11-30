@@ -16,7 +16,12 @@ func init() {
 
 	orm.RegisterDataBase("default", "mysql", "dev_richard:dev_richard@tcp(10.0.12.239:3310)/test?charset=utf8")
 
-	orm.RegisterModel(new(Account), new(QuestionLunjijichu), new(QuestionJicangguanli), new(QuestionLunjiguanli), new(QuestionBipengyuxinhao), new(CourseTest), new(TestQuestion))
+	orm.RegisterModel(new(Account),
+		new(Question1), new(Question2), new(Question3),
+		new(Question4), new(Question5), new(Question6),
+		new(Question7), new(Question8), new(Question9),
+		new(Question10), new(Question11),
+		new(CourseTest), new(TestQuestion))
 
 	orm.SetMaxIdleConns("default", 5)
 

@@ -9,11 +9,32 @@ type QuestionOption struct {
 	OptionKey  string
 }
 
+/*
+1	轮机基础
+2	轮机管理
+3	船舶辅机与电气
+4	船舶动力装置
+5	避碰与信号
+6	船舶管理
+7	航道与引航
+8	船舶操纵
+9	机舱管理
+10	主推进动力装置
+11	船舶驾驶与管理
+*/
+
 var CourseMap = map[string]string{
-	"1": "question_lunjijichu",
-	"2": "question_jicangguanli",
-	"3": "question_lunjiguanli",
-	"4": "question_bipengyuxinhao",
+	"1":  "question_1",
+	"2":  "question_2",
+	"3":  "question_3",
+	"4":  "question_4",
+	"5":  "question_5",
+	"6":  "question_6",
+	"7":  "question_7",
+	"8":  "question_8",
+	"9":  "question_9",
+	"10": "question_10",
+	"11": "question_11",
 }
 
 //Account account model
@@ -27,38 +48,90 @@ type Question struct {
 	Status       int8   `xorm:"int  'status'"`
 }
 
-type QuestionLunjijichu struct {
+type Question1 struct {
 	Question `xorm:"extends"`
 }
 
-//TableName table name
-func (m *QuestionLunjijichu) TableName() string {
-	return "question_lunjijichu"
+func (m *Question1) TableName() string {
+	return "question_1"
 }
 
-type QuestionJicangguanli struct {
+type Question2 struct {
 	Question `xorm:"extends"`
 }
 
-//TableName table name
-func (m *QuestionJicangguanli) TableName() string {
-	return "question_jicangguanli"
+func (m *Question2) TableName() string {
+	return "question_2"
 }
 
-type QuestionLunjiguanli struct {
+type Question3 struct {
 	Question `xorm:"extends"`
 }
 
-//TableName table name
-func (m *QuestionLunjiguanli) TableName() string {
-	return "question_lunjiguanli"
+func (m *Question3) TableName() string {
+	return "question_3"
 }
 
-type QuestionBipengyuxinhao struct {
+type Question4 struct {
 	Question `xorm:"extends"`
 }
 
-//TableName table name
-func (m *QuestionBipengyuxinhao) TableName() string {
-	return "question_bipengyuxinhao"
+func (m *Question4) TableName() string {
+	return "question_4"
+}
+
+type Question5 struct {
+	Question `xorm:"extends"`
+}
+
+func (m *Question5) TableName() string {
+	return "question_5"
+}
+
+type Question6 struct {
+	Question `xorm:"extends"`
+}
+
+func (m *Question6) TableName() string {
+	return "question_6"
+}
+
+type Question7 struct {
+	Question `xorm:"extends"`
+}
+
+func (m *Question7) TableName() string {
+	return "question_7"
+}
+
+type Question8 struct {
+	Question `xorm:"extends"`
+}
+
+func (m *Question8) TableName() string {
+	return "question_8"
+}
+
+type Question9 struct {
+	Question `xorm:"extends"`
+}
+
+func (m *Question9) TableName() string {
+	return "question_9"
+}
+
+type Question10 struct {
+	Question `xorm:"extends"`
+}
+
+func (m *Question10) TableName() string {
+	return "question_10"
+}
+
+type Question11 struct {
+	Question `xorm:"extends"`
+}
+
+func (m *Question11) TableName() string {
+	return "question_11"
 }

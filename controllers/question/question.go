@@ -80,7 +80,7 @@ func (this *QuestionController) UpdateQuestionStatus() {
 		return
 	}
 
-	if payload.CourseId == 0 || payload.CourseId > 4 {
+	if payload.CourseId == 0 || payload.CourseId > 11 {
 		this.Data["json"] = struct {
 			Code int    `json:"code"`
 			Msg  string `json:"msg"`
@@ -125,7 +125,7 @@ func (this *QuestionController) UpdateQuestion() {
 		return
 	}
 
-	if payload.CourseId == 0 || payload.CourseId > 4 {
+	if payload.CourseId == 0 || payload.CourseId > 11 {
 		this.Data["json"] = struct {
 			Code int    `json:"code"`
 			Msg  string `json:"msg"`
@@ -171,7 +171,7 @@ func (this *QuestionController) InsertQuestion() {
 		return
 	}
 
-	if payload.CourseId == 0 || payload.CourseId > 4 {
+	if payload.CourseId == 0 || payload.CourseId > 11 {
 		this.Data["json"] = struct {
 			Code int    `json:"code"`
 			Msg  string `json:"msg"`
