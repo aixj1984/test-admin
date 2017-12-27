@@ -30,7 +30,7 @@ type QuestionProvider struct {
 func (p *QuestionProvider) GetOne(m *models.Question, tablename string) error {
 	o := orm.NewOrm()
 
-	err := o.QueryTable("question_lunjijichu").Filter("id", 1).One(m)
+	err := o.QueryTable(tablename).Filter("id", 1).One(m)
 	if err == orm.ErrMultiRows {
 		// 多条的时候报错
 		return errors.New("Multi Rows")

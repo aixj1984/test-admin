@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<title></title>
+
+<link rel="stylesheet" href="/static/layui/css/layui.css">
+
+<style>
+body{padding: 20px; /*overflow-y: scroll;*/}
+</style>
+</head>
+<body>
+<form class="layui-form layui-form-pane" action="">
+	<div class="layui-form-item">
+	    <label class="layui-form-label">文章标题</label>
+	    <div class="layui-input-block">
+	      <input type="text" id="title" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+	    </div>
+	</div>
+	<div class="layui-form-item">
+	    <label class="layui-form-label">文章来源</label>
+	    <div class="layui-input-block">
+	      <input type="text" id="source" required  lay-verify="required" placeholder="文章来源" autocomplete="off" class="layui-input">
+	    </div>
+	</div>
+	<div class="layui-form-item layui-form-text">
+	   <label class="layui-form-label">文件简介</label>
+	   <div class="layui-input-block">
+	     <textarea placeholder="请输入内容" class="layui-textarea" style="min-height:50px" id="abstract"></textarea>
+	   </div>
+	</div>
+	<div class="layui-form-item layui-form-text">
+	   <label class="layui-form-label">文章内容</label>
+	   <div class="layui-input-block">
+	     <div id="content">
+	        <p>欢迎使用 <b>wangEditor</b> 富文本编辑器</p>
+	    </div>
+	   </div>
+	</div>
+</form>
+
+
+<div class="site-demo-button" style="margin-bottom: 0; text-align: right; "  >
+  <button class="layui-btn " data-type="Save" onclick="Save()">保存</button>
+</div>
+
+
+<script type="text/html" id="toolbarDemo">
+  <i class="layui-icon">&#xe654;</i>
+  <i class="layui-icon">&#xe640;</i>
+</script>
+
+<script type="text/html" id="switchTpl">
+  <!-- 这里的 checked 的状态只是演示 -->
+  <input type="checkbox" name="OptionStatus" value="{{d.OptionStatus}}" disabled lay-skin="switch" lay-text="有|无" lay-filter="sexDemo" {{ d.OptionStatus == 1 ? 'checked' : '' }}>
+</script>
+
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+         
+<script src="/static/layui/layui.js" charset="utf-8"></script>
+
+<script src="/static/js/lib/jquery1.11.3.min.js"></script>
+<script src="/static/js/lib/jquery.helper.js"></script>
+
+<script type="text/javascript" src="/static/wangeditor/wangEditor.min.js"></script>
+
+<script type="text/javascript" src="/static/js/jquery.base64.js"></script>
+
+
+<script>
+	var index = parent.layer.getFrameIndex(window.name);
+
+
+	var E = window.wangEditor
+    var editor = new E('#content')
+    editor.create()
+
+	function getUrlVars(){  
+	    var vars = [], hash;  
+	    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');  
+	    for(var i = 0; i < hashes.length; i++)  
+	    {  
+	        hash = hashes[i].split('=');  
+	        vars.push(hash[0]);  
+	        vars[hash[0]] = hash[1];  
+	    }  
+	    return vars;  
+	}  
+	  
+	function getUrlVar(name){  
+	    return getUrlVars()[name];  
+	}
+	
+	var article = JSON.parse(decodeURIComponent(getUrlVar('article')))
+
+	$.base64.utf8encode = true;
+
+	$("#title").val(article.Title)
+	$("#source").val(article.Source)
+	$("#abstract").val(article.Abstract)
+	editor.txt.html($.base64.atob(article.Content, true))
+
+
+	
+	layui.use(['form','element','upload'], function(){
+		var $ = layui.jquery
+		,element = layui.element
+		,upload = layui.upload; //Tab的切换功能，切换事件监听等，需要依赖element模块
+		
+		$('.site-demo-active').on('click', function(){
+			var othis = $(this), type = othis.data('type');
+		 	active[type] ? active[type].call(this, othis) : '';
+		});
+		
+		upload.render({
+			elem: '#test8'
+			,url: '/upload/'
+			,auto: true
+			//,multiple: true
+			,bindAction: '#test9'
+			,done: function(res){
+			  console.log(res)
+			},error: function(){
+		    	//演示失败状态，并实现重传
+		    	var demoText = $('#demoText');
+		    	demoText.html('<span style="color: #FF5722;">上传失败</span>');
+		    }
+		});
+	});
+	
+	function Save(){
+		
+		
+		var post_body = {
+			ArticleId : article.Id,
+			Title: $("#title").val(),
+			Source:$("#source").val(),
+			Content:$.base64.btoa(editor.txt.html()) ,
+			Abstract:$("#abstract").val()
+		}
+		
+		$.ajax({
+			"type":         "post",
+			"contentType":  "application/json",
+			"url":          "/article/update",
+			"data": JSON.stringify(post_body),
+			"datatype":     "json",
+			"success":   function (resp, textstatue) {
+				console.log(resp)
+				if (resp['code'] == 0){
+					console.log("save success")					
+					parent.layer.close(index);
+					parent.layer.msg("save success!",{icon:1,time:1000});
+					parent.FlushData()
+				}else{
+					layer.msg("error:" + resp["msg"],{icon:2,time:1000});
+				}
+			},
+			"error":function(){
+				layer.msg("ajax error!",{icon:2,time:1000});
+			}
+		}); 
+
+	}
+</script>
+
+</body>
+</html>

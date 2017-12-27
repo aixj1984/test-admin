@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<title></title>
+
+<link rel="stylesheet" href="/static/layui/css/layui.css">
+
+<style>
+body{padding: 20px; /*overflow-y: scroll;*/}
+</style>
+</head>
+<body>
+
+<blockquote class="layui-elem-quote layui-quote-nm" id="title">
+  猿强，则国强。国强，则猿更强！ 
+  <br>——孟子（好囖。。其实这特喵的是我说的）
+</blockquote>
+
+<table  class="layui-hide" id="demo" lay-filter="demo"></table>
+
+<script type="text/html" id="toolbarDemo">
+  <i class="layui-icon">&#xe654;</i>
+  <i class="layui-icon">&#xe640;</i>
+</script>
+
+<script type="text/html" id="switchTpl">
+  <!-- 这里的 checked 的状态只是演示 -->
+  <input type="checkbox" name="OptionStatus" value="{{d.OptionStatus}}" disabled lay-skin="switch" lay-text="有|无" lay-filter="sexDemo" {{ d.OptionStatus == 1 ? 'checked' : '' }}>
+</script>
+         
+<script src="/static/layui/layui.js" charset="utf-8"></script>
+
+<script src="/static/js/lib/jquery1.11.3.min.js"></script>
+<script src="/static/js/lib/jquery.helper.js"></script>
+
+<script>
+
+	function getUrlVars(){  
+	    var vars = [], hash;  
+	    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');  
+	    for(var i = 0; i < hashes.length; i++)  
+	    {  
+	        hash = hashes[i].split('=');  
+	        vars.push(hash[0]);  
+	        vars[hash[0]] = hash[1];  
+	    }  
+	    return vars;  
+	}  
+	  
+	function getUrlVar(name){  
+	    return getUrlVars()[name];  
+	}
+	
+	var question = JSON.parse(decodeURIComponent(getUrlVar('question')))
+	
+	$("#title").html(question.Title)
+	console.log(question)
+	
+	options = JSON.parse(question.Options)
+	answer_map = {}
+	question.Answer.split(":").forEach(function(value){
+		if (value.trim().length > 0){
+			answer_map[value]= value
+		}
+	})
+	
+	console.log(answer_map)
+	for (var i=0; i < options.length; i++){
+		if (answer_map.hasOwnProperty(options[i].OptionKey) ){
+			options[i]["OptionStatus"] = 1
+		}else{
+			options[i]["OptionStatus"] = 0
+		}
+	}
+	
+	layui.use('table', function(){
+	  	var table = layui.table,form = layui.form;
+		//直接赋值数据
+	  	var tableDemo = table.render({
+	    	elem: '#demo'
+	    	//,width: 1200
+	    	//,height: 274
+	   		, cols: [[ //标题栏
+				   {field: 'OptionKey', title: 'KEY', align:'center', width: 60, }
+			      ,{field: 'OptionDesc', title: '选项说明', width: 500} 
+				  ,{field: 'OptionStatus', fixed: 'right', title:'答案', width:85,align:'center', templet: '#switchTpl' , unresize:true}
+				  //,{fixed: 'right', title:'操作', width:178, align:'center', toolbar: '#barDemo'}
+	    	]]
+			//, url: '/question/list'
+			, where:$("#query_form").serializeJson()
+		    , skin: 'row' //表格风格
+		    , even: true
+		    //,size: 'lg' //尺寸
+			, data: options
+		    , page: false //是否显示分页
+		    , loading: true //请求数据时，是否显示loading
+	  	});
+	
+		//监听性别操作
+		form.on('switch(sexDemo)', function(obj){
+		   layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+		});
+		 
+		//监听锁定操作
+		form.on('checkbox(lockDemo)', function(obj){
+		   layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+		});
+	
+		form.on('submit(demo2)', function(data){
+	    	layer.msg(JSON.stringify(data.field));
+			tableDemo.reload({where:$("#query_form").serializeJson()});
+	    	return false;
+	  	});
+		
+		
+		//监听工具条
+	  	table.on('tool(demo)', function(obj){
+		    var data = obj.data;
+		    if(obj.event === 'detail'){
+		      layer.msg('ID：'+ data.id + ' 的查看操作');
+		    } else if(obj.event === 'del'){
+		      layer.confirm('真的删除行么', function(index){
+		        obj.del();
+		        layer.close(index);
+		      });
+		    } else if(obj.event === 'edit'){
+		      //layer.alert('编辑行：<br>'+ JSON.stringify(data))
+				layer.open({
+				  type: 1,
+				  skin: 'layui-layer-rim', //加上边框
+				  area: ['520px', '420px'], //宽高
+				  content: 'html内容'
+				});
+		    }
+		  });
+		
+	});
+	function test(){
+		console.log(111)
+	}
+</script>
+
+</body>
+</html>

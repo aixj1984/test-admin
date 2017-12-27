@@ -5,6 +5,7 @@ var (
 	Account      IAccountProvider
 	Question     IQuestionProvider
 	Test         ITestProvider
+	Article      IArticleProvider
 	TestQuestion ITestQuestionProvider
 )
 
@@ -15,6 +16,8 @@ func init() {
 	Question = &QuestionProvider{}
 
 	Test = &TestProvider{}
+
+	Article = &ArticleProvider{}
 
 	TestQuestion = &TestQuestionProvider{}
 

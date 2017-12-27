@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<title>表格操作 - layui</title>
+
+<link rel="stylesheet" href="/static/layui/css/layui.css">
+
+<style>
+body{padding: 20px; /*overflow-y: scroll;*/}
+</style>
+</head>
+<body>
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 0px;">
+  <legend>查询条件</legend>
+</fieldset>
+<form class="layui-form layui-form-pane" id="query_form">
+  <div class="layui-form-item ">
+	<div class="layui-inline">
+	    <label class="layui-form-label">题目关键字</label>
+	    <div class="layui-input-inline">
+	      <input type="text" name="query_key"  placeholder="题目ID或汉字" autocomplete="off" class="layui-input">
+	    </div>
+	</div>
+	<div class="layui-inline">
+		<label class="layui-form-label">题目状态</label>
+      	<div class="layui-input-block">
+        	<select name="article_status"  lay-search="">
+				<option value="0">编辑中</option>
+				<option value="1">已确认</option>
+				<option value="2" selected>全部</option>
+    	    </select>
+    	</div>
+	</div>
+	<div class="layui-inline">
+		<button class="layui-btn"  lay-submit  lay-filter="Query">查询</button>
+		<button class="layui-btn layui-btn-normal"  lay-submit  lay-filter="addNew">新增</button>
+	</div>
+  </div>
+  
+</form>
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+  <legend>查询结果</legend>
+</fieldset>
+
+<table  class="layui-hide" id="demo" lay-filter="demo"></table>
+
+<script type="text/html" id="toolbarDemo">
+  <i class="layui-icon">&#xe654;</i>
+  <i class="layui-icon">&#xe640;</i>
+</script>
+
+<script type="text/html" id="switchTpl">
+  <!-- 这里的 checked 的状态只是演示 -->
+  <input type="checkbox" name="Status" value="{{d.Id}}" lay-skin="switch" lay-text="编辑|完成" lay-filter="sexDemo" {{ d.Status == 0 ? 'checked' : '' }} >
+</script>
+
+<script type="text/html" id="typeTpl">
+    {{ d.QuestionType == 0 ? '选择' : '其他' }}
+</script>
+
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+         
+
+<script src="/static/layui/layui.js" charset="utf-8"></script>
+
+<script src="/static/js/lib/jquery1.11.3.min.js"></script>
+<script src="/static/js/lib/jquery.helper.js"></script>
+
+<script>
+	console.log($("#query_form").serializeJson())
+	var tableDemo 
+
+	layui.use('table', function(){
+	  	var table = layui.table,form = layui.form;
+		//直接赋值数据
+	  	tableDemo = table.render({
+	    	elem: '#demo'
+	    	//,width: 1200
+	    	//,height: 274
+	   		, cols: [[ //标题栏
+			      {field: 'Id', title: 'ID', width: 80, fixed: 'left'}
+				  ,{field: 'Source', title: '来源', align:'left', width: 200}
+			      ,{field: 'Title', title: '标题', width: 660}
+				  ,{field: 'PublicTime', title: '创建时间', width: 180}
+				  ,{field: 'ReadCount', title: '访问量', width: 120}
+				  ,{field: 'Status', fixed: 'right', title:'状态', width:85,align:'center', templet: '#switchTpl' , unresize:true}
+				  ,{fixed: 'right', title:'操作', width:120, align:'center', toolbar: '#barDemo'}
+	    	]]
+			, url: '/article/list'
+			, where:$("#query_form").serializeJson()
+		    , skin: 'row' //表格风格
+		    , even: true
+		    //,size: 'lg' //尺寸
+			, done: function(res, curr, count){
+			    //如果是异步请求数据方式，res即为你接口返回的信息。
+			    //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+			    //console.log(res);
+			    
+			    //得到当前页码
+			    //console.log(curr); 
+			    
+			    //得到数据总量
+			    //console.log(count);
+			  }
+		    
+		    , page: true //是否显示分页
+		    , limits: [10,20,30]
+		    , limit: 10 //每页默认显示的数量
+		    , loading: true //请求数据时，是否显示loading
+	  	});
+	
+		//监听操作
+		form.on('switch(sexDemo)', function(obj){
+		    //layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+			var article_id = this.value
+			layer.confirm('确认该题目已经完成了吗?', {
+			  	title: '题目确认',
+				btn: ['确认','取消'] //按钮
+			}, function(){
+				var requerst_body = {}
+				requerst_body["ArticleId"] = parseInt(article_id)
+				requerst_body["Status"] = !obj.elem.checked?1:0
+				$.ajax({
+					"type":         "post",
+					"contentType":  "application/json",
+					"url":          "/article/updatestatus",
+					"data": JSON.stringify(requerst_body),
+					"datatype":     "json",
+					"success":   function (resp, textstatue) {
+						console.log(resp)
+						if (resp['code'] == 0){
+							console.log("save success")					
+							layer.msg('修改成功', {icon: 1});
+							FlushData()
+						}else{
+							layer.msg("error:" + resp["msg"],{icon:2,time:1000});
+							FlushData()
+							return false
+						}
+					},
+					"error":function(){
+						layer.msg("ajax error!",{icon:2,time:1000});
+						FlushData()
+					}
+				});
+			}, function(){
+				layer.msg('☺审题是很神圣的工作☺', {
+			    	time: 2000, //2s后自动关闭
+			    	btn: ['明白了', '知道了']
+			  	});
+				FlushData()
+			});
+		});
+	
+		form.on('submit(Query)', function(data){
+	    	//layer.msg(JSON.stringify(data.field));
+			tableDemo.reload({where:$("#query_form").serializeJson()});
+	    	return false;
+	  	});
+		
+		form.on('submit(addNew)', function(data){
+			AddNew()
+	    	return false;
+	  	});
+		
+		//监听工具条
+	  	table.on('tool(demo)', function(obj){
+		    var data = obj.data;
+		    if(obj.event === 'detail'){
+		      layer.open({
+				  type: 2,
+				  title: '题目信息：'+$("#course_id").find("option:selected").text(),
+				  skin: 'layui-layer-rim', //加上边框
+				  area: ['550px', '380px'], //宽高
+				  content: '/static/views/article/query.html?article='+encodeURIComponent(JSON.stringify(data))
+				});
+		    } else if(obj.event === 'del'){
+				/*
+			      layer.confirm('真的删除行么', function(index){
+			        obj.del();
+			        layer.close(index);
+			      });*/
+				layer.msg('暂时不开放删除', {icon: 2,time: 1000});
+		    } else if(obj.event === 'edit'){
+				console.log(data)
+				if (data.Status >0 ){
+					layer.msg('确认了的无法再编辑', {icon: 2,time: 1000});
+					return 
+				}
+				layer.open({
+				  type: 2,
+				  title: '文章信息',
+				  skin: 'layui-layer-rim', //加上边框
+				  area: ['700px', '550px'], //宽高
+				  content: '/static/views/article/edit.html?article='+encodeURIComponent(JSON.stringify(data))
+				});
+		    }
+		  });
+		
+
+	});
+	function FlushData(){
+		tableDemo.reload({where:$("#query_form").serializeJson()});
+	}
+	
+	function AddNew(){
+		layer.open({
+		  type: 2,
+		  title: '新增文章',
+		  skin: 'layui-layer-rim', //加上边框
+		  area: ['700px', '550px'], //宽高
+		  content: '/static/views/article/add.html'
+		});
+	}
+</script>
+
+
+</body>
+</html>

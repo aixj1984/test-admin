@@ -2,6 +2,7 @@ package routers
 
 import (
 	"test-admin/controllers"
+	"test-admin/controllers/article"
 	"test-admin/controllers/question"
 	"test-admin/controllers/test"
 
@@ -23,4 +24,10 @@ func init() {
 
 	beego.Router("/test/question/list", &test.TestController{}, "get:ListTestQuestion")
 	beego.Router("/test/question/updatestatus", &test.TestController{}, "post:UpdateTestQuestionStatus")
+
+	beego.Router("/article/list", &article.ArticleController{}, "get:ListArticle")
+	beego.Router("/article/update", &article.ArticleController{}, "post:UpdateArticle")
+	beego.Router("/article/updatestatus", &article.ArticleController{}, "post:UpdateArticleStatus")
+	beego.Router("/article/insert", &article.ArticleController{}, "post:InsertArticle")
+
 }
