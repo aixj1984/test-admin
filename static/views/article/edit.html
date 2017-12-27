@@ -69,7 +69,7 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 
 <script type="text/javascript" src="/static/wangeditor/wangEditor.min.js"></script>
 
-<script type="text/javascript" src="/static/js/jquery.base64.js"></script>
+<script type="text/javascript" src="/static/js/base64.min.js"></script>
 
 
 <script>
@@ -103,8 +103,8 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 	$("#title").val(article.Title)
 	$("#source").val(article.Source)
 	$("#abstract").val(article.Abstract)
-	editor.txt.html($.base64.atob(article.Content, true))
-
+	//editor.txt.html($.base64.atob(article.Content, true))
+	editor.txt.html(Base64.decode(article.Content))
 
 	
 	layui.use(['form','element','upload'], function(){
@@ -140,7 +140,8 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 			ArticleId : article.Id,
 			Title: $("#title").val(),
 			Source:$("#source").val(),
-			Content:$.base64.btoa(editor.txt.html()) ,
+			//Content:$.base64.btoa(editor.txt.html()) ,
+			Content:Base64.encode(editor.txt.html()) ,
 			Abstract:$("#abstract").val()
 		}
 		

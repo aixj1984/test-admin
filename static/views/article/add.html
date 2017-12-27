@@ -69,6 +69,8 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 
 <script type="text/javascript" src="/static/wangeditor/wangEditor.min.js"></script>
 
+<script type="text/javascript" src="/static/js/jquery.base64.js"></script>
+
 <script>
 	var index = parent.layer.getFrameIndex(window.name);
 
@@ -127,7 +129,7 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 		var post_body = {
 			Title: $("#title").val(),
 			Source:$("#source").val(),
-			Content:editor.txt.html(),
+			Content:$.base64.btoa(editor.txt.html()) ,
 			Abstract:$("#abstract").val()
 		}
 		
