@@ -14,7 +14,7 @@ func init() {
 
 	orm.Debug = true
 
-	orm.RegisterDataBase("default", "mysql", "dev_richard:dev_richard@tcp(10.0.12.239:3310)/test?charset=utf8")
+	orm.RegisterDataBase("default", "mysql", beego.AppConfig.String("db_conn"))
 
 	orm.RegisterModel(new(Account),
 		new(Question1), new(Question2), new(Question3),

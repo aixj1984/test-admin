@@ -13,174 +13,61 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 </head>
 <body>
 <form class="layui-form layui-form-pane" action="">
-  <div class="layui-form-item layui-form-text">
-    <label class="layui-form-label">题目内容</label>
-    <div class="layui-input-block">
-      <textarea placeholder="请输入内容" class="layui-textarea" style="min-height:50px" id="title"></textarea>
+  	<div class="layui-form-item layui-form-text">
+	    <label class="layui-form-label">题目内容</label>
+	    <div class="layui-input-block">
+	      <textarea placeholder="请输入内容" class="layui-textarea" style="min-height:50px" id="title"></textarea>
+	    </div>
+  	</div>
+	<div class="layui-form-item" pane="">
+	    <label class="layui-form-label">问题答案</label>
+	    <div class="layui-input-block">
+	      	<input type="checkbox" name="answer" value="A"  lay-skin="primary" title="A">
+	      	<input type="checkbox" name="answer" value="B"  lay-skin="primary" title="B">
+	      	<input type="checkbox" name="answer" value="C"  lay-skin="primary" title="C">
+			<input type="checkbox" name="answer" value="D"  lay-skin="primary" title="D">
+			<input type="checkbox" name="answer" value="E"  lay-skin="primary" title="E">
+			<input type="checkbox" name="answer" value="F"  lay-skin="primary" title="F">
+	    </div>
     </div>
-  </div>
-</form>
-
-<!--<table  class="layui-hide" id="demo" lay-filter="demo"></table>-->
-
-
-<div class="layui-tab layui-tab-card" lay-filter="demo" >
-  <ul class="layui-tab-title">
-    <li class="layui-this" lay-id="11">选项A</li>
-    <li lay-id="22">选项B</li>
-    <li lay-id="33">选项C</li>
-    <li lay-id="44">选项D</li>
-    <li lay-id="55">选项E</li>
-	<li lay-id="55">选项F</li>
-  </ul>
-  <div class="layui-tab-content">
-    <div class="layui-tab-item layui-show">
-		<form class="layui-form" action="" id="A">
-			<div class="layui-form-item" pane="">
-			    <label class="layui-form-label">选项类型</label>
-			    <div class="layui-input-block">
-			      <input type="radio" name="sex" value="0" title="文本" checked="">
-			      <input type="radio" name="sex" value="1" title="图片">
-			    </div>
-			</div>
-			<div class="layui-form-item">
-			    <label class="layui-form-label">选项内容</label>
-			    <div class="layui-input-block">
-			      <input type="text" name="option_value" lay-verify="title" autocomplete="off" placeholder="请输入选项A" class="layui-input">
-			    </div>
-			</div>
-			<div class="layui-form-item" pane="">
-			    <label class="layui-form-label">是否答案</label>
-			    <div class="layui-input-block">
-			      <input type="radio" name="answer" value="0" title="否" checked="">
-			      <input type="radio" name="answer" value="1" title="是">
-			    </div>
-			</div>
-		</form>
-	</div>
-    <div class="layui-tab-item">
-		<form class="layui-form" action="" id="B">
-			<div class="layui-form-item" pane="">
-			    <label class="layui-form-label">选项类型</label>
-			    <div class="layui-input-block">
-			      <input type="radio" name="sex" value="0" title="文本" checked="">
-			      <input type="radio" name="sex" value="1" title="图片">
-			    </div>
-			</div>
-			<div class="layui-form-item">
-			    <label class="layui-form-label">选项内容</label>
-			    <div class="layui-input-block">
-			      <input type="text" name="option_value" lay-verify="title" autocomplete="off" placeholder="请输入选项B" class="layui-input">
-			    </div>
-			</div>
-			<div class="layui-form-item" pane="">
-			    <label class="layui-form-label">是否答案</label>
-			    <div class="layui-input-block">
-			      <input type="radio" name="answer" value="0" title="否" checked="">
-			      <input type="radio" name="answer" value="1" title="是">
-			    </div>
-			</div>
-		</form>
-	</div>
-    <div class="layui-tab-item">
-		<form class="layui-form" action="" id="C">
-			<div class="layui-form-item" pane="">
-			    <label class="layui-form-label">选项类型</label>
-			    <div class="layui-input-block">
-			      <input type="radio" name="sex" value="0" title="文本" checked="">
-			      <input type="radio" name="sex" value="1" title="图片">
-			    </div>
-			</div>
-			<div class="layui-form-item">
-			    <label class="layui-form-label">选项内容</label>
-			    <div class="layui-input-block">
-			      <input type="text" name="option_value" lay-verify="title" autocomplete="off" placeholder="请输入选项C" class="layui-input">
-			    </div>
-			</div>
-			<div class="layui-form-item" pane="">
-			    <label class="layui-form-label">是否答案</label>
-			    <div class="layui-input-block">
-			      <input type="radio" name="answer" value="0" title="否" checked="">
-			      <input type="radio" name="answer" value="1" title="是">
-			    </div>
-			</div>
-		</form>
-	</div>
-    <div class="layui-tab-item">
-		<form class="layui-form" action="" id="D">
-			<div class="layui-form-item" pane="">
-			    <label class="layui-form-label">选项类型</label>
-			    <div class="layui-input-block">
-			      <input type="radio" name="sex" value="0" title="文本" checked="">
-			      <input type="radio" name="sex" value="1" title="图片">
-			    </div>
-			</div>
-			<div class="layui-form-item">
-			    <label class="layui-form-label">选项内容</label>
-			    <div class="layui-input-block">
-			      <input type="text" name="option_value" lay-verify="title" autocomplete="off" placeholder="请输入选项D" class="layui-input">
-			    </div>
-			</div>
-			<div class="layui-form-item" pane="">
-			    <label class="layui-form-label">是否答案</label>
-			    <div class="layui-input-block">
-			      <input type="radio" name="answer" value="0" title="否" checked="">
-			      <input type="radio" name="answer" value="1" title="是">
-			    </div>
-			</div>
-		</form>
-	</div>
-    <div class="layui-tab-item">
-		<form class="layui-form" action="" id="E">
-			<div class="layui-form-item" pane="">
-			    <label class="layui-form-label">选项类型</label>
-			    <div class="layui-input-block">
-			      <input type="radio" name="sex" value="0" title="文本" checked="">
-			      <input type="radio" name="sex" value="1" title="图片">
-			    </div>
-			</div>
-			<div class="layui-form-item">
-			    <label class="layui-form-label">选项内容</label>
-			    <div class="layui-input-block">
-			      <input type="text" name="option_value" lay-verify="title" autocomplete="off" placeholder="请输入选项E" class="layui-input">
-			    </div>
-			</div>
-			<div class="layui-form-item" pane="">
-			    <label class="layui-form-label">是否答案</label>
-			    <div class="layui-input-block">
-			      <input type="radio" name="answer" value="0" title="否" checked="">
-			      <input type="radio" name="answer" value="1" title="是">
-			    </div>
-			</div>
-		</form>
-	</div>
-	<div class="layui-tab-item">
-		<form class="layui-form" action="" id="F">
-			<div class="layui-form-item" pane="">
-			    <label class="layui-form-label">选项类型</label>
-			    <div class="layui-input-block">
-			      <input type="radio" name="sex" value="0" title="文本" checked="">
-			      <input type="radio" name="sex" value="1" title="图片">
-			    </div>
-			</div>
-			<div class="layui-form-item">
-			    <label class="layui-form-label">选项内容</label>
-			    <div class="layui-input-block">
-			      <input type="text" name="option_value" lay-verify="title" autocomplete="off" placeholder="请输入选项F" class="layui-input">
-			    </div>
-			</div>
-			<div class="layui-form-item" pane="">
-			    <label class="layui-form-label">是否答案</label>
-			    <div class="layui-input-block">
-			      <input type="radio" name="answer" value="0" title="否" checked="">
-			      <input type="radio" name="answer" value="1" title="是">
-			    </div>
-			</div>
-		</form>
-	</div>
 	
-  </div>
-</div>
+	<div class="layui-form-item">
+	    <label class="layui-form-label">选项A</label>
+	    <div class="layui-input-block">
+	        <input type="text" id="AnswerA" lay-verify="required" autocomplete="off" class="layui-input">
+	    </div>
+	</div>
+	<div class="layui-form-item">
+	    <label class="layui-form-label">选项B</label>
+	    <div class="layui-input-block">
+	        <input type="text" id="AnswerB" lay-verify="required" autocomplete="off" class="layui-input">
+	    </div>
+	</div>
+	<div class="layui-form-item">
+	    <label class="layui-form-label">选项C</label>
+	    <div class="layui-input-block">
+	        <input type="text" id="AnswerC" lay-verify="required" autocomplete="off" class="layui-input">
+	    </div>
+	</div>
+	<div class="layui-form-item">
+	    <label class="layui-form-label">选项D</label>
+	    <div class="layui-input-block">
+	        <input type="text" id="AnswerD" lay-verify="required" autocomplete="off" class="layui-input">
+	    </div>
+	</div>
+	<div class="layui-form-item">
+	    <label class="layui-form-label">选项E</label>
+	    <div class="layui-input-block">
+	        <input type="text" id="AnswerE" lay-verify="required" autocomplete="off" class="layui-input">
+	    </div>
+	</div>
+	<div class="layui-form-item">
+	    <label class="layui-form-label">选项F</label>
+	    <div class="layui-input-block">
+	        <input type="text" id="AnswerF" lay-verify="required" autocomplete="off" class="layui-input">
+	    </div>
+	</div>
+</form>
 
 <div class="site-demo-button" style="margin-bottom: 0; text-align: right; "  >
   <button class="layui-btn " data-type="Save" onclick="Save()">保存</button>
@@ -192,15 +79,6 @@ body{padding: 20px; /*overflow-y: scroll;*/}
   <i class="layui-icon">&#xe640;</i>
 </script>
 
-<script type="text/html" id="switchTpl">
-  <!-- 这里的 checked 的状态只是演示 -->
-  <input type="checkbox" name="OptionStatus" value="{{d.OptionStatus}}" disabled lay-skin="switch" lay-text="有|无" lay-filter="sexDemo" {{ d.OptionStatus == 1 ? 'checked' : '' }}>
-</script>
-
-<script type="text/html" id="barDemo">
-  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-</script>
          
 <script src="/static/layui/layui.js" charset="utf-8"></script>
 
@@ -235,14 +113,13 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 	console.log(options)
 	
 	options.forEach(function(option){
-		$("#"+option.OptionKey+" input:radio[name=sex][value="+option.OptionType.toString()+"]").attr("checked",true);
-		$("#"+option.OptionKey+" input:text[name=option_value]").val(option.OptionDesc);
+		$("#Answer"+option.OptionKey).val(option.OptionDesc);
 	})
 	
 	
 	question.Answer.split(":").forEach(function(value){
 		if (value.trim().length > 0){
-			$("#"+value+" input:radio[name=answer][value=1]").attr("checked",true);
+			$("input:checkbox[name=answer][value="+value+"]").attr("checked",true);
 		}
 	})
 	
@@ -282,18 +159,25 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 				OptionDesc:"",
 				OptionKey:value,
 			}
-			option.OptionType = $("#"+value+" input:radio[name=sex]:checked").val();
-			option.OptionDesc = $("#"+value+" input:text[name=option_value]").val();
-			if (option.OptionDesc.length == 0){
+			option.OptionType = 0;
+			option.OptionDesc = $("#Answer"+value).val();
+			if (option.OptionDesc.trim().length == 0){
 				return
-			}
-			if ($("#"+value+" input:radio[name=answer]:checked").val() == "1"){
-				save_answer_array.push(value)
 			}
 
 			save_option_array.push(option)
 
 		}); 
+		
+		$("input:checkbox[name=answer]:checkbox:checked").each(function(){
+			
+			if ($("#Answer"+$(this).val()).val().trim().length == 0){
+				return
+			}
+			save_answer_array.push($(this).val())
+		})
+		
+		
 		console.log(save_answer_array)
 		console.log(save_option_array)
 		
@@ -331,7 +215,6 @@ body{padding: 20px; /*overflow-y: scroll;*/}
 				layer.msg("ajax error!",{icon:2,time:1000});
 			}
 		}); 
-
 	}
 </script>
 

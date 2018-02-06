@@ -1,4 +1,6 @@
 logs/
+conf/
+conf/*.*
 test-admin
 test-admin.exe
 logs/*.*
